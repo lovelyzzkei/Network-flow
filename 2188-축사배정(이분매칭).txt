@@ -1,0 +1,54 @@
+#include<iostream>
+#include<vector>
+#define MAX 201	// 소와 축사의 개수의 최댓값
+using namespace std;
+
+vector<int> a[MAX];		// 
+int d[MAX] = { 0 };	// 현재 축사에 어떤 소가 매칭되어 있는지 확인하기 위한 배열
+bool c[MAX];	// 해당 축사를 방문 처리했는지 확인하기 위한 배열
+bool dfs(int x);	// 이분 매칭을 위한 DFS함수
+
+int main() {
+	cin.tie(NULL);
+	ios::sync_with_stdio(false);
+
+	// 소의 마릿수와 축사의 개수를 받음
+	int n, m;
+	cin >> n >> m;
+
+	// N마리의 소들이 각자 들어가기 원하는 축사의 정보를 받음
+	int numberOfCattle, info;
+	for (int i = 1; i <= n; i++) {
+		cin >> numberOfCattle;
+		for (int j = 1; j <= numberOfCattle; j++) {
+			cin >> info;
+			a[i].push_back(info);
+		}
+	}
+
+	// 벡터 배열 a에 대해 이분매칭 수행
+	int count = 0;
+	for (int i = 1; i <= n; i++) {
+		fill(c, c + MAX, false);
+		if (dfs(i)) {
+			count++;
+		}
+	}
+	cout << count << "\n";
+	return 0;
+}
+
+bool dfs(int x) {
+	for (int i = 0; i < a[x].size(); i++) {
+		int t = a[x][i];
+		if (c[t] == true) {	// 이미 탐색했으면 건너 뜀
+			continue;
+		}
+		c[t] = true;
+		if (d[t] == 0 || dfs(d[t])) {	// 해당 축사에 아직 소가 매칭되어있지 않거나, 매칭되어있는 소가 다른 축사로 매칭 가능할 때
+			d[t] = x;
+			return true;
+		}
+	}
+	return false;
+}
